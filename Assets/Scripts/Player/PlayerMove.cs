@@ -60,14 +60,13 @@ public class PlayerMove : MonoBehaviour
 
         Animate();
         Look();
-        if (MovementType == MovementType.CharacterController)
-            Move();
+
+        if (MovementType == MovementType.CharacterController) Move();
     }
 
     private void FixedUpdate()
     {
-        if (MovementType == MovementType.Rigidbody)
-            Move();
+        if (MovementType == MovementType.Rigidbody) Move();
     }
 
     private void OldSystemInputs()
@@ -79,7 +78,7 @@ public class PlayerMove : MonoBehaviour
         // move
         _axisForward = Input.GetAxis("Vertical");
         _axisStrafe = Input.GetAxis("Horizontal");
-        _jumpPressed = Input.GetButtonDown("Jump");
+        _jumpPressed = Input.GetButton("Jump");
         _sprintFactor = Input.GetKey(KeyCode.LeftShift) ? 1.3f : 1f;
 
         // zoom camera
@@ -110,8 +109,6 @@ public class PlayerMove : MonoBehaviour
     {
         _characterController.enabled = MovementType == MovementType.CharacterController;
 
-        _rigidbody.useGravity = !IsGrounded();
-
         //jumping
         if (IsGrounded())
         {
@@ -123,8 +120,7 @@ public class PlayerMove : MonoBehaviour
                     _gravityVector = Vector3.up * JumpValue;
                 else
                 {
-                    _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0f, _rigidbody.velocity.z);
-                    _rigidbody.AddForce(200f * JumpValue * Vector3.up, ForceMode.Impulse);
+                    _rigidbody.AddForce(JumpValue * Vector3.up, ForceMode.Impulse);
                 }
             }
         }
@@ -164,8 +160,8 @@ public class PlayerMove : MonoBehaviour
         }
         else
         {
-            Vector3 movement = new Vector3(horizontalMovement.x * RigidBodySpeed, _rigidbody.velocity.y * 100f, horizontalMovement.z * RigidBodySpeed);
-            _rigidbody.velocity = Time.fixedDeltaTime * movement;
+            Vector3 movement = new Vector3(horizontalMovement.x, 0f, horizontalMovement.z) * RigidBodySpeed;
+            _rigidbody.MovePosition(_rigidbody.position + Time.fixedDeltaTime * movement);
         }
     }
 

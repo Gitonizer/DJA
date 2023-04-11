@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterControllerMove : MonoBehaviour
 {
-    private CharacterController _characterController;
+    private Rigidbody _rigidbody;
 
     public float Speed;
 
@@ -15,7 +15,7 @@ public class CharacterControllerMove : MonoBehaviour
 
     private void Awake()
     {
-        _characterController = GetComponent<CharacterController>();
+        _rigidbody = GetComponent<Rigidbody>();
         _turn = new Vector3();
     }
 
@@ -27,6 +27,10 @@ public class CharacterControllerMove : MonoBehaviour
     private void Update()
     {
         Look();
+    }
+
+    private void FixedUpdate()
+    {
         Move();
     }
 
@@ -43,10 +47,14 @@ public class CharacterControllerMove : MonoBehaviour
         float axisForward = Input.GetAxis("Vertical");
         float axisStrafe = Input.GetAxis("Horizontal");
 
-        Vector3 applyGravity = Vector3.up * -GRAVITY;
+        if (Input.GetButtonDown("Jump"))
+        {
+            print("Jumping");
+            _rigidbody.AddForce(Vector3.up * 10f, ForceMode.Impulse);
+        }
 
-        Vector3 movement = Speed * Time.deltaTime * ((transform.forward * axisForward + transform.right * axisStrafe).normalized + applyGravity);
+        Vector3 movement = _rigidbody.position + Speed * Time.fixedDeltaTime * ((transform.forward * axisForward + transform.right * axisStrafe).normalized);
 
-        _characterController.Move(movement);
+        _rigidbody.MovePosition(movement);
     }
 }
