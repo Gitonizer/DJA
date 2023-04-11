@@ -30,6 +30,14 @@ public class CharacterControllerMove : MonoBehaviour
         Move();
     }
 
+    private void Look()
+    {
+        _turn.x += Input.GetAxis("Mouse X") * Sensitivity;
+        _turn.y += Input.GetAxis("Mouse Y") * Sensitivity;
+
+        transform.localRotation = Quaternion.Euler(-_turn.y, _turn.x, 0);
+    }
+
     private void Move()
     {
         float axisForward = Input.GetAxis("Vertical");
@@ -37,16 +45,8 @@ public class CharacterControllerMove : MonoBehaviour
 
         Vector3 applyGravity = Vector3.up * -GRAVITY;
 
-        Vector3 movement = ((transform.forward * axisForward + transform.right * axisStrafe).normalized + applyGravity) * Speed * Time.deltaTime;
+        Vector3 movement = Speed * Time.deltaTime * ((transform.forward * axisForward + transform.right * axisStrafe).normalized + applyGravity);
 
         _characterController.Move(movement);
-    }
-
-    private void Look()
-    {
-        _turn.x += Input.GetAxis("Mouse X") * Sensitivity;
-        _turn.y += Input.GetAxis("Mouse Y") * Sensitivity;
-
-        transform.localRotation = Quaternion.Euler(-_turn.y, _turn.x, 0);
     }
 }
