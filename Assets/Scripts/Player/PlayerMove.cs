@@ -30,28 +30,38 @@ public class PlayerMove : MonoBehaviour
 
     private const float MAX_ANIMATION_SPEED = 6f;
 
-    private const float CAMERA_ZOOM_MIN = -3.0f;
-    private const float CAMERA_ZOOM_MAX = 0.36f;
+    private const float CAMERA_ZOOM_X_MIN = -1f;
+    private const float CAMERA_ZOOM_X_MAX = -0f;
+    private const float CAMERA_ZOOM_Z_MIN = -3.0f;
+    private const float CAMERA_ZOOM_Z_MAX = 0.36f;
 
     private bool _jumpPressed;
 
     private float _sprintFactor;
+    private bool _fire;
+    private bool _onCooldown;
+
+    private ShootClass _shootClass;
 
     private void Awake()
     {
         _animator = GetComponentInChildren<Animator>();
         _characterController = GetComponent<CharacterController>();
         _rigidbody = GetComponent<Rigidbody>();
+        _shootClass = GetComponent<ShootClass>();
         _turn = new Vector3();
         _cameraZoom = new Vector3();
         _gravityVector = Vector3.zero;
         _jumpPressed = false;
         _sprintFactor = 1f;
+        _fire = false;
+        _onCooldown = false;
     }
 
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void Update()
@@ -61,12 +71,14 @@ public class PlayerMove : MonoBehaviour
         Animate();
         Look();
 
+
         if (MovementType == MovementType.CharacterController) Move();
     }
 
     private void FixedUpdate()
     {
         if (MovementType == MovementType.Rigidbody) Move();
+        Fire();
     }
 
     private void OldSystemInputs()
@@ -79,10 +91,11 @@ public class PlayerMove : MonoBehaviour
         _axisForward = Input.GetAxis("Vertical");
         _axisStrafe = Input.GetAxis("Horizontal");
         _jumpPressed = Input.GetButton("Jump");
+        _fire = Input.GetButton("Fire1");
         _sprintFactor = Input.GetKey(KeyCode.LeftShift) ? 1.3f : 1f;
 
         // zoom camera
-        _cameraZoom = new Vector3(0f, 0f, Input.GetAxis("Mouse ScrollWheel"));
+        _cameraZoom = new Vector3(Input.GetAxis("Mouse ScrollWheel") * 0.5f, 0f, Input.GetAxis("Mouse ScrollWheel"));
 
     }
 
@@ -102,7 +115,7 @@ public class PlayerMove : MonoBehaviour
         transform.localRotation = Quaternion.Euler(0, _turn.x, 0);
         CameraHolder.transform.localRotation = Quaternion.Euler(-_turn.y, 0, 0);
         Camera.transform.localPosition += _cameraZoom * CameraZoomSensitivity;
-        Camera.transform.localPosition = new Vector3(0f, 0f, Mathf.Clamp(Camera.transform.localPosition.z, CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX));
+        Camera.transform.localPosition = new Vector3(Mathf.Clamp(Camera.transform.localPosition.x, CAMERA_ZOOM_X_MIN, CAMERA_ZOOM_X_MAX), 0f, Mathf.Clamp(Camera.transform.localPosition.z, CAMERA_ZOOM_Z_MIN, CAMERA_ZOOM_Z_MAX));
     }
 
     private void Move()
@@ -117,10 +130,10 @@ public class PlayerMove : MonoBehaviour
             if (_jumpPressed)
             {
                 if (MovementType == MovementType.CharacterController)
-                    _gravityVector = Vector3.up * JumpValue;
+                    _gravityVector = Vector3.up * JumpValue * 0.7f;
                 else
                 {
-                    _rigidbody.AddForce(JumpValue * Vector3.up, ForceMode.Impulse);
+                    _rigidbody.AddForce(JumpValue * 1.1f * Vector3.up, ForceMode.Impulse);
                 }
             }
         }
@@ -137,6 +150,19 @@ public class PlayerMove : MonoBehaviour
         Vector3 movement = _sprintFactor * ((transform.forward * _axisForward + transform.right * _axisStrafe).normalized);
 
         MoveCharacter(movement, _gravityVector);
+    }
+
+    private void Fire()
+    {
+        if(_fire && !_onCooldown)
+        {
+            _onCooldown = true;
+
+            StartCoroutine(_shootClass.ShootBullet(() =>
+            {
+                _onCooldown = false;
+            }));
+        }
     }
 
     private float SpeedToAnimationSpeed(float currentSpeed)

@@ -49,7 +49,6 @@ public class CharacterControllerMove : MonoBehaviour
 
         if (Input.GetButtonDown("Jump"))
         {
-            print("Jumping");
             _rigidbody.AddForce(Vector3.up * 10f, ForceMode.Impulse);
         }
 
