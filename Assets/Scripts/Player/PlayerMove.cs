@@ -17,6 +17,7 @@ public class PlayerMove : MonoBehaviour
     public GameObject CameraHolder;
     public GameObject Camera;
 
+    private GameManager _gameManager;
     private Animator _animator;
     private float _axisForward;
     private float _axisStrafe;
@@ -36,6 +37,7 @@ public class PlayerMove : MonoBehaviour
     private const float CAMERA_ZOOM_Z_MAX = 0.36f;
 
     private bool _jumpPressed;
+    private bool _pauseToggle;
 
     private float _sprintFactor;
     private bool _fire;
@@ -45,6 +47,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Awake()
     {
+        _gameManager = GetComponentInParent<GameManager>();
         _animator = GetComponentInChildren<Animator>();
         _characterController = GetComponent<CharacterController>();
         _rigidbody = GetComponent<Rigidbody>();
@@ -56,6 +59,7 @@ public class PlayerMove : MonoBehaviour
         _sprintFactor = 1f;
         _fire = false;
         _onCooldown = false;
+        _pauseToggle = false;
     }
 
     private void Start()
@@ -66,11 +70,14 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
+        if (transform.position.y < -30f)
+            _gameManager.RestartLevel();
+
         OldSystemInputs();
 
+        ManagePause();
         Animate();
         Look();
-
 
         if (MovementType == MovementType.CharacterController) Move();
     }
@@ -84,8 +91,11 @@ public class PlayerMove : MonoBehaviour
     private void OldSystemInputs()
     {
         // look
-        _turn.x += Input.GetAxis("Mouse X") * CameraLookSensitivity;
-        _turn.y += Input.GetAxis("Mouse Y") * CameraLookSensitivity;
+        if (!_gameManager.IsPaused)
+        {
+            _turn.x += Input.GetAxis("Mouse X") * CameraLookSensitivity;
+            _turn.y += Input.GetAxis("Mouse Y") * CameraLookSensitivity;
+        }
         
         // move
         _axisForward = Input.GetAxis("Vertical");
@@ -97,6 +107,8 @@ public class PlayerMove : MonoBehaviour
         // zoom camera
         _cameraZoom = new Vector3(Input.GetAxis("Mouse ScrollWheel") * 0.5f, 0f, Input.GetAxis("Mouse ScrollWheel"));
 
+        // pause game
+        _pauseToggle = Input.GetKeyDown(KeyCode.Escape);
     }
 
     private void Animate()
@@ -189,6 +201,12 @@ public class PlayerMove : MonoBehaviour
             Vector3 movement = new Vector3(horizontalMovement.x, 0f, horizontalMovement.z) * RigidBodySpeed;
             _rigidbody.MovePosition(_rigidbody.position + Time.fixedDeltaTime * movement);
         }
+    }
+
+    private void ManagePause()
+    {
+        if (_pauseToggle)
+            _gameManager.TogglePause();
     }
 
     // make code more clear
