@@ -22,12 +22,27 @@ public class GameManager : MonoBehaviour
         else PauseGame();
     }
 
+    public void BackToMenu(Animation animation)
+    {
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.None;
+        StartCoroutine(AnimationHelper.AnimateButton(animation, () => SceneManager.LoadScene("MainMenu")));
+    }
+
+    public void ResumeGame(Animation animation)
+    {
+        Time.timeScale = 1f;
+        StartCoroutine(AnimationHelper.AnimateButton(animation, () => ResumeGame()));
+    }
+
     private void PauseGame()
     {
         _isPaused = true;
         PlayerCanvasGroup.alpha = 0f;
         PauseCanvasGroup.alpha = 0.8f;
         Time.timeScale = 0f;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void ResumeGame()
@@ -36,6 +51,8 @@ public class GameManager : MonoBehaviour
         PlayerCanvasGroup.alpha = 1f;
         PauseCanvasGroup.alpha = 0f;
         Time.timeScale = 1f;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public bool IsPaused

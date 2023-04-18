@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
-
     public void GoToScene(Animation animation)
     {
         StartCoroutine(AnimationHelper.AnimateButton(animation, () => SceneManager.LoadScene("Level1", LoadSceneMode.Single)));
