@@ -45,6 +45,8 @@ public class PlayerMove : MonoBehaviour
 
     private ShootClass _shootClass;
 
+    private InputManager _inputManager;
+
     private void Awake()
     {
         _gameManager = GetComponentInParent<GameManager>();
@@ -52,6 +54,7 @@ public class PlayerMove : MonoBehaviour
         _characterController = GetComponent<CharacterController>();
         _rigidbody = GetComponent<Rigidbody>();
         _shootClass = GetComponent<ShootClass>();
+        _inputManager = _gameManager.InputManager;
         _turn = new Vector3();
         _cameraZoom = new Vector3();
         _gravityVector = Vector3.zero;
@@ -90,25 +93,28 @@ public class PlayerMove : MonoBehaviour
 
     private void OldSystemInputs()
     {
+        if (_inputManager.IsNewInputSystem)
+            return;
+
         // look
         if (!_gameManager.IsPaused)
         {
-            _turn.x += Input.GetAxis("Mouse X") * CameraLookSensitivity;
-            _turn.y += Input.GetAxis("Mouse Y") * CameraLookSensitivity;
+            _turn.x += _inputManager.LookX() * CameraLookSensitivity;
+            _turn.y += _inputManager.LookY() * CameraLookSensitivity;
         }
         
         // move
-        _axisForward = Input.GetAxis("Vertical");
-        _axisStrafe = Input.GetAxis("Horizontal");
-        _jumpPressed = Input.GetButton("Jump");
-        _fire = Input.GetButton("Fire1");
-        _sprintFactor = Input.GetKey(KeyCode.LeftShift) ? 1.3f : 1f;
+        _axisForward = _inputManager.MoveVertical();
+        _axisStrafe = _inputManager.MoveHorizontal();
+        _jumpPressed = _inputManager.Jump();
+        _fire = _inputManager.Fire();
+        _sprintFactor = _inputManager.IsSprinting() ? 1.3f : 1f;
 
         // zoom camera
-        _cameraZoom = new Vector3(Input.GetAxis("Mouse ScrollWheel") * 0.5f, 0f, Input.GetAxis("Mouse ScrollWheel"));
+        _cameraZoom = new Vector3(_inputManager.IsScrolling() * 0.5f, 0f, _inputManager.IsScrolling());
 
         // pause game
-        _pauseToggle = Input.GetKeyDown(KeyCode.Escape);
+        _pauseToggle = _inputManager.IsPausing();
     }
 
     private void Animate()

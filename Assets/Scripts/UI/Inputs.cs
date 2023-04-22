@@ -13,6 +13,7 @@ public class Inputs : MonoBehaviour
     public Image Right;
     public Image Sprint;
     public Image Jump;
+    public Image LeftMouse;
 
     public Color ButtonUnpressed;
     public Color ButtonPressed;
@@ -26,6 +27,7 @@ public class Inputs : MonoBehaviour
         ManageButtonState(KeyCode.D, Right);
         ManageButtonState(KeyCode.LeftShift, Sprint);
         ManageButtonState(KeyCode.Space, Jump);
+        ManageMouseState(LeftMouse);
     }
 
     public void ManageButtonState(KeyCode keyCode, Image button)
@@ -33,6 +35,13 @@ public class Inputs : MonoBehaviour
         if (Input.GetKeyDown(keyCode))
             button.color = ButtonPressed;
         else if (Input.GetKeyUp(keyCode))
+            button.color = ButtonUnpressed;
+    }
+    public void ManageMouseState(Image button)
+    {
+        if (Input.GetMouseButtonDown(0))
+            button.color = ButtonPressed;
+        else if (Input.GetMouseButtonUp(0))
             button.color = ButtonUnpressed;
     }
 }

@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public CanvasGroup PlayerCanvasGroup;
     public CanvasGroup PauseCanvasGroup;
+    public InputManager InputManager;
 
     private bool _isPaused = false;
 
