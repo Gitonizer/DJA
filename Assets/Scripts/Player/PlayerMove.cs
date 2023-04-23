@@ -36,6 +36,9 @@ public class PlayerMove : MonoBehaviour
     private const float CAMERA_ZOOM_Z_MIN = -3.0f;
     private const float CAMERA_ZOOM_Z_MAX = 0.36f;
 
+    private const float CAMERA_TURN_MINY = -70f;
+    private const float CAMERA_TURN_MAXY = 50f;
+
     private bool _jumpPressed;
     private bool _pauseToggle;
 
@@ -76,7 +79,7 @@ public class PlayerMove : MonoBehaviour
         if (transform.position.y < -30f)
             _gameManager.RestartLevel();
 
-        OldSystemInputs();
+        Inputs();
 
         ManagePause();
         Animate();
@@ -91,30 +94,29 @@ public class PlayerMove : MonoBehaviour
         Fire();
     }
 
-    private void OldSystemInputs()
+    private void Inputs()
     {
-        if (_inputManager.IsNewInputSystem)
-            return;
-
         // look
         if (!_gameManager.IsPaused)
         {
-            _turn.x += _inputManager.LookX() * CameraLookSensitivity;
-            _turn.y += _inputManager.LookY() * CameraLookSensitivity;
+            _turn.x += _inputManager.OnLookX() * (!_inputManager.IsUsingNewInputSystem ? CameraLookSensitivity : 1f);
+            _turn.y += _inputManager.OnLookY() * (!_inputManager.IsUsingNewInputSystem ? CameraLookSensitivity : 1f);
+
+            _turn.y = Mathf.Clamp(_turn.y, CAMERA_TURN_MINY, CAMERA_TURN_MAXY);
         }
-        
+
         // move
-        _axisForward = _inputManager.MoveVertical();
-        _axisStrafe = _inputManager.MoveHorizontal();
-        _jumpPressed = _inputManager.Jump();
-        _fire = _inputManager.Fire();
-        _sprintFactor = _inputManager.IsSprinting() ? 1.3f : 1f;
+        _axisForward = _inputManager.OnMoveVertical();
+        _axisStrafe = _inputManager.OnMoveHorizontal();
+        _jumpPressed = _inputManager.OnJump();
+        _fire = _inputManager.OnFire();
+        _sprintFactor = _inputManager.OnSprint() ? 1.3f : 1f;
 
         // zoom camera
-        _cameraZoom = new Vector3(_inputManager.IsScrolling() * 0.5f, 0f, _inputManager.IsScrolling());
+        _cameraZoom = new Vector3(_inputManager.OnMouseScrolling() * 0.5f, 0f, _inputManager.OnMouseScrolling());
 
         // pause game
-        _pauseToggle = _inputManager.IsPausing();
+        _pauseToggle = _inputManager.OnPause();
     }
 
     private void Animate()
@@ -215,7 +217,5 @@ public class PlayerMove : MonoBehaviour
             _gameManager.TogglePause();
     }
 
-    // make code more clear
-    // rigidbody mode
-    // create player controller movement base to inherit? maybe
+    // UI INPUT
 }

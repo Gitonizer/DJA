@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 
     private void PauseGame()
     {
-        _isPaused = true;
+        _isPaused = InputManager.IsGamePaused = true;
         PlayerCanvasGroup.alpha = 0f;
         PauseCanvasGroup.alpha = 0.8f;
         Time.timeScale = 0f;
@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
 
     private void ResumeGame()
     {
-        _isPaused = false;
+        _isPaused = InputManager.IsGamePaused = false;
         PlayerCanvasGroup.alpha = 1f;
         PauseCanvasGroup.alpha = 0f;
         Time.timeScale = 1f;
