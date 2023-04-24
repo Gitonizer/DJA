@@ -167,7 +167,8 @@ public class PlayerMove : MonoBehaviour
             PlayerModel.transform.localRotation = Quaternion.LookRotation(new Vector3(_axisStrafe, 0, _axisForward), Vector3.up);
 
         //moving
-        Vector3 movement = _sprintFactor * ((transform.forward * _axisForward + transform.right * _axisStrafe).normalized);
+        Vector3 playerDirection = transform.forward * _axisForward + transform.right * _axisStrafe;
+        Vector3 movement = _sprintFactor * (_inputManager.IsUsingNewInputSystem ? playerDirection : playerDirection.normalized);
 
         MoveCharacter(movement, _gravityVector);
     }

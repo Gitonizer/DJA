@@ -19,8 +19,6 @@ public class InputManager : MonoBehaviour
     private bool _isFiring;
     private bool _isJumping;
 
-    private InputDevice m_LastUsedDevice;
-
     private void OnEnable()
     {
         InputActions = new NewInput();
