@@ -18,10 +18,10 @@ public class EnemyAgent : MonoBehaviour
 
     private void Update()
     {
-        if (_playerCurrentPosition != Player.transform.position)
-        {
-            _navMeshAgent.SetDestination(Player.transform.position);
-            _playerCurrentPosition = Player.transform.position;
-        }
+        if (_playerCurrentPosition == Player.transform.position)
+            return;
+
+        _navMeshAgent.SetDestination(Player.transform.position);
+        _playerCurrentPosition = Player.transform.position;
     }
 }
