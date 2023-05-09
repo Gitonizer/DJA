@@ -22,7 +22,11 @@ public class Bullet : MonoBehaviour
     {
         if (LayerMask.GetMask(LayerMask.LayerToName(collision.gameObject.layer)) == LayerMask)
         {
-            collision.gameObject.GetComponent<ParticleSystem>().Play();
+            if (collision.gameObject.GetComponent<ParticleSystem>())
+                collision.gameObject.GetComponent<ParticleSystem>().Play();
+
+            if (collision.gameObject.GetComponent<IDamageable>() != null)
+                collision.gameObject.GetComponent<IDamageable>().Damage();
         }
     }
 }

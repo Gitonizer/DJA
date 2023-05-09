@@ -3699,7 +3699,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh19530
+  m_Name: pb_Mesh43928
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4208,6 +4208,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1916185956}
     m_Modifications:
+    - target: {fileID: 4662203705274219118, guid: 13db861511a08b847af4707d9f706049, type: 3}
+      propertyPath: m_MaxParticleSize
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4695455584752523670, guid: 13db861511a08b847af4707d9f706049, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5158344129723626965, guid: 13db861511a08b847af4707d9f706049, type: 3}
       propertyPath: Player
       value: 
