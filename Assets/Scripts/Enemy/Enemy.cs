@@ -10,16 +10,25 @@ public class Enemy : MonoBehaviour, IDamageable
     private AudioSource _audioSource;
     private const float MAX_HEALTH = 10f;
     private Slider _healthBar;
+    private Camera _camera;
 
     private void Awake()
     {
         _audioSource = GetComponent<AudioSource>();
         _healthBar = GetComponentInChildren<Slider>();
+        _camera = Camera.main;
+
     }
 
     void Start()
     {
-        CurrentHealth = MAX_HEALTH;
+        _healthBar.minValue = 0f;
+        _healthBar.maxValue = CurrentHealth = MAX_HEALTH;
+    }
+
+    private void Update()
+    {
+        _healthBar.transform.LookAt(_camera.transform);
     }
 
     public void Damage()
