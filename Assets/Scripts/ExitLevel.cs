@@ -8,6 +8,7 @@ public class ExitLevel : MonoBehaviour
     public string NextLevel;
     private void OnTriggerEnter(Collider other)
     {
-        SceneManager.LoadScene(NextLevel);
+        if (other.gameObject.CompareTag("Player"))
+            SceneManager.LoadScene(NextLevel);
     }
 }
