@@ -11,13 +11,13 @@ public class Enemy : MonoBehaviour, IDamageable
     private const float MAX_HEALTH = 10f;
     private Slider _healthBar;
     private Camera _camera;
+    private EnemyManager _enemyManager;
 
     private void Awake()
     {
         _audioSource = GetComponent<AudioSource>();
         _healthBar = GetComponentInChildren<Slider>();
         _camera = Camera.main;
-
     }
 
     void Start()
@@ -31,6 +31,11 @@ public class Enemy : MonoBehaviour, IDamageable
         _healthBar.transform.LookAt(_camera.transform);
     }
 
+    public void Initialize(EnemyManager enemyManager)
+    {
+        _enemyManager = enemyManager;
+    }
+
     public void Damage()
     {
         _healthBar.value = CurrentHealth -= 1f;
@@ -38,6 +43,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
         if (CurrentHealth <= 0f)
         {
+            _enemyManager.HandleEnemyDeath();
             Destroy(gameObject);
         }
     }

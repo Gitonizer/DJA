@@ -14,6 +14,8 @@ public class EnemyAgent : MonoBehaviour
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _playerCurrentPosition = new Vector3();
+
+        Player = GameObject.FindGameObjectWithTag("Player");
     }
 
     private void Update()
