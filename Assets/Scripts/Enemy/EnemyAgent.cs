@@ -23,7 +23,7 @@ public class EnemyAgent : MonoBehaviour
         if (_playerCurrentPosition == Player.transform.position)
             return;
 
-        _navMeshAgent.SetDestination(Player.transform.position);
+        if (_navMeshAgent.isOnNavMesh) _navMeshAgent.SetDestination(Player.transform.position);
         _playerCurrentPosition = Player.transform.position;
     }
 }
